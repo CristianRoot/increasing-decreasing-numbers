@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Main {
 
-	public static final int NUMBER = 5;
+	public static final int NUMBER = 6;
 
 	public static void main(String[] args) {
 		long time = System.currentTimeMillis();
@@ -106,25 +106,13 @@ public class Main {
 		BigInteger count = BigInteger.ZERO;
 
 		if (recursionLevel == 0) {
-			for (int i = 2; i <= 10; i++) {
+			for (int i = 2; i <= 10 - start; i++) {
 				count = count.add(sumatorium(BigInteger.valueOf(i)).subtract(BigInteger.ONE));
 			}
-		} else if(recursionLevel == 1) {
-			for (int j = 0; j < 9; j++) {
-				for (int i = 2; i <= 10 - j; i++) {
-					count = count.add(sumatorium(BigInteger.valueOf(i)).subtract(BigInteger.ONE));
-				}
-				count = count.add(BigInteger.valueOf(9 - j));
-			}
-		}else if(recursionLevel == 2) {
-			for (int k = 0; k < 9; k++) {
-				for (int j = k; j < 9; j++) {
-					for (int i = 2; i <= 10 - j; i++) {
-						count = count.add(sumatorium(BigInteger.valueOf(i)).subtract(BigInteger.ONE));
-					}
-					count = count.add(BigInteger.valueOf(9 - j));
-				}
-				count = count.add(BigInteger.valueOf(9 - k));
+		} else {
+			for (int i = start; i < 9; i++) {
+				count = count.add(countDecreaseNumbers(i, recursionLevel - 1));
+				count = count.add(BigInteger.valueOf(9 - i));
 			}
 		}
 

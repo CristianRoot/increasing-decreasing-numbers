@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 public class Main {
 
-	private static final int NUMBER = 20;
+	private static final int NUMBER = 3;
 
 	public static void main(String[] args) {
 		long time = System.currentTimeMillis();
@@ -19,9 +19,6 @@ public class Main {
 	}
 
 	private static BigInteger totalDecMath(int pow) {
-		if (pow <= 2)
-			return BigInteger.TEN.pow(pow);
-
 		BigInteger count = BigInteger.ZERO;
 
 		int recursionLevel = pow - 2;

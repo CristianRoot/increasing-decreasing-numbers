@@ -1,11 +1,15 @@
 package com.cristianroot;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
 
 	private static final int NUMBER = 20;
 	private static final BigInteger[] summation = new BigInteger[10];
+	private static Map<Long, BigInteger> decResultStack = new HashMap<>();
+	private static Map<Long, BigInteger> incResultStack = new HashMap<>();
 
 	public static void main(String[] args) {
 		initializeSummations();
@@ -56,25 +60,41 @@ public class Main {
 		return n.pow(2).add(n).divide(BigInteger.valueOf(2L));
 	}
 
-	private static BigInteger countIncreaseNumbers(int start, int recursionLevel) {
+	private static BigInteger countIncreaseNumbers(long start, int recursionLevel) {
 		BigInteger count = BigInteger.ZERO;
 
-		for (int i = start; i < 9; i++) {
-			count = count.add(recursionLevel > 0 ? countIncreaseNumbers(i, recursionLevel - 1) : summation[8 - i]);
+		if (recursionLevel == 0) {
+			if (incResultStack.containsKey(start))
+				return incResultStack.get(start);
+
+			for (long i = start; i < 9; i++) {
+				count = count.add(summation[(int) (8 - i)]);
+			}
+
+			incResultStack.put(start, count);
+		} else {
+			for (long i = start; i < 9; i++) {
+				count = count.add(countIncreaseNumbers(i, recursionLevel - 1));
+			}
 		}
 
 		return count;
 	}
 
-	private static BigInteger countDecreaseNumbers(int start, int recursionLevel) {
+	private static BigInteger countDecreaseNumbers(long start, int recursionLevel) {
 		BigInteger count = BigInteger.ZERO;
 
 		if (recursionLevel == 0) {
+			if (decResultStack.containsKey(start))
+				return decResultStack.get(start);
+
 			for (int i = 2; i <= 10 - start; i++) {
 				count = count.add(summation[i - 1].subtract(BigInteger.ONE));
 			}
+
+			decResultStack.put(start, count);
 		} else {
-			for (int i = start; i < 9; i++) {
+			for (long i = start; i < 9; i++) {
 				count = count.add(countDecreaseNumbers(i, recursionLevel - 1))
 							 .add(BigInteger.valueOf(9 - i));
 			}

@@ -4,21 +4,30 @@ import java.math.BigInteger;
 
 public class Main {
 
-	private static final int NUMBER = 3;
+	private static final int NUMBER = 20;
+	private static final BigInteger[] summation = new BigInteger[10];
 
 	public static void main(String[] args) {
+		initializeSummations();
+
 		long time = System.currentTimeMillis();
-		BigInteger totalIncMath = totalIncMath(NUMBER);
-		System.out.println("INC -- " + totalIncMath.toString() + ", " + (System.currentTimeMillis() - time) + "ms");
+		BigInteger totalInc = totalInc(NUMBER);
+		System.out.println("INC -- " + totalInc.toString() + ", " + (System.currentTimeMillis() - time) + "ms");
 
 		time = System.currentTimeMillis();
-		BigInteger totalDecMath = totalDecMath(NUMBER);
-		System.out.println("DEC -- " + totalDecMath.toString() + ", " + (System.currentTimeMillis() - time) + "ms");
+		BigInteger totalDec = totalDec(NUMBER);
+		System.out.println("DEC -- " + totalDec.toString() + ", " + (System.currentTimeMillis() - time) + "ms");
 
-		System.out.println("TOTAL -- " + (totalDecMath.add(totalIncMath)));
+		System.out.println("TOTAL -- " + (totalDec.add(totalInc)));
 	}
 
-	private static BigInteger totalDecMath(int pow) {
+	private static void initializeSummations() {
+		for (int i = 1; i <= 10; i++) {
+			summation[i - 1] = summation(BigInteger.valueOf(i));
+		}
+	}
+
+	private static BigInteger totalDec(int pow) {
 		BigInteger count = BigInteger.ZERO;
 
 		int recursionLevel = pow - 2;
@@ -29,7 +38,7 @@ public class Main {
 		return count;
 	}
 
-	private static BigInteger totalIncMath(int pow) {
+	private static BigInteger totalInc(int pow) {
 		if (pow <= 2)
 			return BigInteger.TEN.pow(pow);
 
@@ -43,7 +52,7 @@ public class Main {
 		return count;
 	}
 
-	private static BigInteger sumatorium(BigInteger n) {
+	private static BigInteger summation(BigInteger n) {
 		return n.pow(2).add(n).divide(BigInteger.valueOf(2L));
 	}
 
@@ -51,8 +60,7 @@ public class Main {
 		BigInteger count = BigInteger.ZERO;
 
 		for (int i = start; i < 9; i++) {
-			count = count.add(recursionLevel > 0 ? countIncreaseNumbers(i, recursionLevel - 1)
-												 : sumatorium(BigInteger.valueOf(9L - i)));
+			count = count.add(recursionLevel > 0 ? countIncreaseNumbers(i, recursionLevel - 1) : summation[8 - i]);
 		}
 
 		return count;
@@ -63,12 +71,12 @@ public class Main {
 
 		if (recursionLevel == 0) {
 			for (int i = 2; i <= 10 - start; i++) {
-				count = count.add(sumatorium(BigInteger.valueOf(i)).subtract(BigInteger.ONE));
+				count = count.add(summation[i - 1].subtract(BigInteger.ONE));
 			}
 		} else {
 			for (int i = start; i < 9; i++) {
-				count = count.add(countDecreaseNumbers(i, recursionLevel - 1));
-				count = count.add(BigInteger.valueOf(9 - i));
+				count = count.add(countDecreaseNumbers(i, recursionLevel - 1))
+							 .add(BigInteger.valueOf(9 - i));
 			}
 		}
 

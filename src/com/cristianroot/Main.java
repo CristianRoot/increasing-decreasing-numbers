@@ -5,13 +5,10 @@ import java.math.BigInteger;
 public class Main {
 
 	private static final long[] summation = new long[10];
-	private static final long[][] decResultStack = new long[2][9];
-	private static final long[][] incResultStack = new long[2][9];
 
 	public static void main(String[] args) {
 		long time = System.currentTimeMillis();
-		initializeSummations();
-		System.out.println("TOTAL -- " + totalIncDec(100) + " in " + (System.currentTimeMillis() - time) + "ms");
+		System.out.println("TOTAL -- " + totalIncDec(2) + " in " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private static void initializeSummations() {
@@ -24,10 +21,13 @@ public class Main {
 		return n.pow(2).add(n).divide(BigInteger.valueOf(2L)).longValue();
 	}
 
-	private static BigInteger totalIncDec(int pow) {
+	public static BigInteger totalIncDec(int pow) {
 		if (pow <= 2)
 			return BigInteger.TEN.pow(pow);
 
+		initializeSummations();
+		final long[][] decResultStack = new long[2][9];
+		final long[][] incResultStack = new long[2][9];
 		int recursionLevel = pow - 3;
 		long countIncNumbers = 100;
 		long countDecNumbers = 0;

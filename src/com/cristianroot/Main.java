@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 public class Main {
 
-	private static final int NUMBER = 100;
 	private static final long[] summation = new long[10];
 	private static final long[][] decResultStack = new long[2][9];
 	private static final long[][] incResultStack = new long[2][9];
@@ -12,7 +11,7 @@ public class Main {
 	public static void main(String[] args) {
 		long time = System.currentTimeMillis();
 		initializeSummations();
-		System.out.println("TOTAL -- " + countIncDecNumbers(NUMBER) + " in " + (System.currentTimeMillis() - time) + "ms");
+		System.out.println("TOTAL -- " + totalIncDec(100) + " in " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private static void initializeSummations() {
@@ -25,9 +24,9 @@ public class Main {
 		return n.pow(2).add(n).divide(BigInteger.valueOf(2L)).longValue();
 	}
 
-	private static long countIncDecNumbers(int pow) {
+	private static BigInteger totalIncDec(int pow) {
 		if (pow <= 2)
-			return BigInteger.TEN.pow(pow).longValue();
+			return BigInteger.TEN.pow(pow);
 
 		int recursionLevel = pow - 3;
 		long countIncNumbers = 100;
@@ -70,7 +69,7 @@ public class Main {
 			}
 		}
 
-		return countIncNumbers + countDecNumbers;
+		return BigInteger.valueOf(countIncNumbers + countDecNumbers);
 	}
 
 }

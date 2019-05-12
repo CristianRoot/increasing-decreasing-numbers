@@ -4,23 +4,15 @@ import java.math.BigInteger;
 
 public class Main {
 
-	private static final int NUMBER = 6;
+	private static final int NUMBER = 100;
 	private static final long[] summation = new long[10];
 	private static final long[][] decResultStack = new long[2][9];
 	private static final long[][] incResultStack = new long[2][9];
 
 	public static void main(String[] args) {
-		initializeSummations();
-
 		long time = System.currentTimeMillis();
-		long totalInc = countIncreaseNumbers(NUMBER);
-		System.out.println("INC -- " + totalInc + ", " + (System.currentTimeMillis() - time) + "ms");
-
-		time = System.currentTimeMillis();
-		long totalDec = countDecreaseNumbers(NUMBER);
-		System.out.println("DEC -- " + totalDec + ", " + (System.currentTimeMillis() - time) + "ms");
-
-		System.out.println("TOTAL -- " + (totalDec + totalInc));
+		initializeSummations();
+		System.out.println("TOTAL -- " + countIncDecNumbers(NUMBER) + " in " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 	private static void initializeSummations() {
@@ -33,59 +25,37 @@ public class Main {
 		return n.pow(2).add(n).divide(BigInteger.valueOf(2L)).longValue();
 	}
 
-	private static long countIncreaseNumbers(int pow) {
+	private static long countIncDecNumbers(int pow) {
 		if (pow <= 2)
 			return BigInteger.TEN.pow(pow).longValue();
 
 		int recursionLevel = pow - 3;
-		long count = 100;
+		long countIncNumbers = 100;
+		long countDecNumbers = 0;
 
-		// First calc
+		// First calc increase numbers
 		for (int i = 0; i < 9; i++) {
 			long calc = summation[i];
 			incResultStack[0][i] = calc;
-			count += calc;
+			countIncNumbers += calc;
+		}
+
+		// First calc decrease numbers
+		for (int i = 2; i <= 10; i++) {
+			long calc = summation[i - 1] - 1;
+			decResultStack[0][i - 2] = calc;
+			countDecNumbers += calc;
 		}
 
 		// Simulate recursion
 		for (int r = 0; r < recursionLevel; r++) {
 			for (int i = 0; i < 9; i++) {
-				count += incResultStack[0][i] * (9 - i);
+				countIncNumbers += incResultStack[0][i] * (9 - i);
+				countDecNumbers += (decResultStack[0][i] + 1) * (9 - i);
 
 				// Update recursion stack
 				for (int j = 0; j <= i; j++) {
 					incResultStack[1][i] += incResultStack[0][j];
-				}
-			}
-
-			// Prepare stack for the next round
-			for (int i = 0; i < 9; i++) {
-				incResultStack[0][i] = incResultStack[1][i];
-				incResultStack[1][i] = 0;
-			}
-		}
-
-		return count;
-	}
-
-	private static long countDecreaseNumbers(int pow) {
-		long count = 0;
-		int recursionLevel = pow - 3;
-
-		// First calc
-		for (int i = 2; i <= 10; i++) {
-			long calc = summation[i - 1] - 1;
-			decResultStack[0][i - 2] = calc;
-			count += calc;
-		}
-
-		// Simulate recursion
-		for (int r = 0; r < recursionLevel; r++) {
-			for (int i = 0; i < 9; i++) {
-				count += (decResultStack[0][i] + 1) * (9 - i);
-
-				// Update recursion stack
-				for (int j = 0; j <= i; j++) {
 					decResultStack[1][i] += decResultStack[0][j];
 				}
 				decResultStack[1][i] += i + 1;
@@ -93,12 +63,14 @@ public class Main {
 
 			// Prepare stack for the next round
 			for (int i = 0; i < 9; i++) {
+				incResultStack[0][i] = incResultStack[1][i];
 				decResultStack[0][i] = decResultStack[1][i];
+				incResultStack[1][i] = 0;
 				decResultStack[1][i] = 0;
 			}
 		}
 
-		return count;
+		return countIncNumbers + countDecNumbers;
 	}
 
 }

@@ -81,14 +81,14 @@ public class Main {
 
 		// Simulate recursion
 		for (int r = 0; r < recursionLevel; r++) {
-			for (int i = 2; i <= 10; i++) {
-				count += (decResultStack[0][i - 2] + 1) * (11 - i);
+			for (int i = 0; i < 9; i++) {
+				count += (decResultStack[0][i] + 1) * (9 - i);
 
 				// Update recursion stack
-				for (int j = 2; j <= i; j++) {
-					decResultStack[1][i - 2] += decResultStack[0][j - 2];
+				for (int j = 0; j <= i; j++) {
+					decResultStack[1][i] += decResultStack[0][j];
 				}
-				decResultStack[1][i - 2] += i - 1;
+				decResultStack[1][i] += i + 1;
 			}
 
 			// Prepare stack for the next round

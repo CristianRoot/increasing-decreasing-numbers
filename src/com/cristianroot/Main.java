@@ -4,8 +4,10 @@ import java.math.BigInteger;
 
 public class Main {
 
-	private static final int NUMBER = 30;
+	private static final int NUMBER = 40;
 	private static final long[] summation = new long[10];
+	private static long[][] decResultStack;
+	private static long[][] incResultStack;
 
 	public static void main(String[] args) {
 		initializeSummations();
@@ -27,15 +29,8 @@ public class Main {
 		}
 	}
 
-	private static long totalDec(int pow) {
-		long count = 0;
-
-		int recursionLevel = pow - 2;
-		for (int i = 0; i < recursionLevel; i++) {
-			count += countDecreaseNumbers(0, i);
-		}
-
-		return count;
+	private static long summation(BigInteger n) {
+		return n.pow(2).add(n).divide(BigInteger.valueOf(2L)).longValue();
 	}
 
 	private static long totalInc(int pow) {
@@ -45,43 +40,70 @@ public class Main {
 		long count = 100;
 		int recursionLevel = pow - 2;
 
+		incResultStack = new long[recursionLevel][9];
 		for (int i = 0; i < recursionLevel; i++) {
-			count += countIncreaseNumbers(0, i);
+			count += countIncreaseNumbers(i);
 		}
 
 		return count;
 	}
 
-	private static long summation(BigInteger n) {
-		return n.pow(2).add(n).divide(BigInteger.valueOf(2L)).longValue();
-	}
-
-	private static long countIncreaseNumbers(int start, int recursionLevel) {
+	private static long countIncreaseNumbers(int recursionLevel) {
 		long count = 0;
 
 		if (recursionLevel == 0) {
-			for (int i = start; i < 9; i++) {
-				count += summation[8 - i];
+			for (int i = 0; i < 9; i++) {
+				long calc = summation[i];
+				incResultStack[recursionLevel][i] = calc;
+				count += calc;
 			}
 		} else {
-			for (int i = start; i < 9; i++) {
-				count += countIncreaseNumbers(i, recursionLevel - 1);
+			for (int i = 0; i < 9; i++) {
+				count += incResultStack[recursionLevel - 1][i] * (9 - i);
+
+				// Update recursion stack
+				long acc = 0;
+				for (int j = 0; j <= i; j++) {
+					acc += incResultStack[recursionLevel - 1][j];
+				}
+				incResultStack[recursionLevel][i] = acc;
 			}
 		}
 
 		return count;
 	}
 
-	private static long countDecreaseNumbers(int start, int recursionLevel) {
+	private static long totalDec(int pow) {
+		long count = 0;
+		int recursionLevel = pow - 2;
+
+		decResultStack = new long[recursionLevel][9];
+		for (int i = 0; i < recursionLevel; i++) {
+			count += countDecreaseNumbers(i);
+		}
+
+		return count;
+	}
+
+	private static long countDecreaseNumbers(int recursionLevel) {
 		long count = 0;
 
 		if (recursionLevel == 0) {
-			for (int i = 2; i <= 10 - start; i++) {
-				count += summation[i - 1] - 1;
+			for (int i = 2; i <= 10; i++) {
+				long calc = summation[i - 1] - 1;
+				decResultStack[recursionLevel][i - 2] = calc;
+				count += calc;
 			}
 		} else {
-			for (int i = start; i < 9; i++) {
-				count = count + countDecreaseNumbers(i, recursionLevel - 1) + 9 - i;
+			for (int i = 2; i <= 10; i++) {
+				count += (decResultStack[recursionLevel - 1][i - 2] + 1) * (11 - i);
+
+				// Update recursion stack
+				long acc = 0;
+				for (int j = 2; j <= i; j++) {
+					acc += decResultStack[recursionLevel - 1][j - 2];
+				}
+				decResultStack[recursionLevel][i - 2] = acc + (i - 1);
 			}
 		}
 
